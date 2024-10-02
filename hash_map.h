@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define INITIAL_CAPACITY 16
-
 typedef struct hash_node {
   void* key;
   void* value;
@@ -26,7 +24,7 @@ typedef struct hash_map {
   int (*cmp_fn)(const void*, const void*); // optional custom comparator
 } hash_map;
 
-void hash_map_init(hash_map** map, unsigned long (*)(const void*), int (*)(const void*, const void*), size_t capacity, double max_load_factor);
+void hash_map_init(hash_map** map, unsigned long (*hash_fn)(const void*), int (*cmp_fn)(const void*, const void*), size_t capacity, double max_load_factor);
 void hash_map_free(hash_map* map);
 void hash_map_clear(hash_map* map);
 hash_node* hash_map_insert(hash_map* map, void* key, void* value);

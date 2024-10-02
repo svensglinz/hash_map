@@ -12,13 +12,14 @@ int default_eq(const void* key1, const void* key2) {
 }
 
 hash_map* hash_map_resize(hash_map* map) {
+  // double size
   size_t capacity_n = map->capacity << 1;
 
   #ifdef DEBUG
   printf("rehashing to capacity: %lu\n", capacity_n);
   #endif
 
-  // double the memory usage which is not optimal...
+  // temporarily increases memory to capacity old + capacity new
   hash_node** buckets_n = (hash_node**) malloc(capacity_n * sizeof(hash_node*));
 
   if (buckets_n == NULL) {
@@ -26,7 +27,7 @@ hash_map* hash_map_resize(hash_map* map) {
     exit(1);
   }
 
-  // do the rehashing
+  // rehash all keys
   for (size_t i = 0; i < map->capacity; i++) {
     hash_node* node = map->buckets[i];
 
@@ -66,7 +67,7 @@ void hash_map_init(hash_map** map, unsigned long (*hash_fn)(const void*), int (*
   }
 
   for (size_t i = 0; i < capacity; i++) {
-    buckets_n[i] = NULL;
+    buckets_n[i] = ;
   }
 
   (*map)->buckets = buckets_n;
