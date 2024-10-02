@@ -1,16 +1,59 @@
 #include "hash_map.h"
 #include <string.h>
 
+// default hashing function
 unsigned long default_hash(const void* key) {
   return (unsigned long) key;
 }
 
+// default comparator
 int default_eq(const void* key1, const void* key2) {
   return key1 == key2;
 }
 
-void hash_map_init(hash_map** map, unsigned long (*hash_fn)(const void*), int (*cmp_fn)(const void*, const void*)) {
-  size_t capacity = 16;
+hash_map* hash_map_resize(hash_map* map) {
+  size_t capacity_n = map->capacity << 1;
+
+  #ifdef DEBUG
+  printf("rehashing to capacity: %lu\n", capacity_n);
+  #endif
+
+  // double the memory usage which is not optimal...
+  hash_node** buckets_n = (hash_node**) malloc(capacity_n * sizeof(hash_node*));
+
+  if (buckets_n == NULL) {
+    fprintf(stderr, "Error while reallocating memory");
+    exit(1);
+  }
+
+  // do the rehashing
+  for (size_t i = 0; i < map->capacity; i++) {
+    hash_node* node = map->buckets[i];
+
+    if (node != NULL) {
+      unsigned long hash = map->hash_fn(node->key);
+      buckets_n[hash % capacity_n] = node;
+    }
+  }
+  free(map->buckets);
+  map->buckets = buckets_n;
+  map->capacity = capacity_n;
+
+  #ifdef DEBUG
+  printf("old load factor: %f\n", map->load_factor);
+  printf("NAX load factor: %f\n", map->max_load_factor);
+  #endif
+
+  map->load_factor = (float) map->size / (float) capacity_n;
+
+  #ifdef DEBUG
+  printf("new load factor: %f\n", map->load_factor);
+  #endif
+
+  return map;
+}
+
+void hash_map_init(hash_map** map, unsigned long (*hash_fn)(const void*), int (*cmp_fn)(const void*, const void*), size_t capacity, double max_load_factor) {
 
   *map = malloc(sizeof(hash_map));
 
@@ -27,6 +70,9 @@ void hash_map_init(hash_map** map, unsigned long (*hash_fn)(const void*), int (*
   }
 
   (*map)->buckets = buckets_n;
+  (*map)->max_load_factor = max_load_factor;
+  (*map)->size = 0;
+  (*map)->load_factor = 0;
   (*map)->capacity = capacity;
   (*map)->hash_fn = hash_fn == NULL? default_hash: hash_fn;
   (*map)->cmp_fn = cmp_fn == NULL? default_eq: cmp_fn;
@@ -53,7 +99,7 @@ hash_node* hash_map_insert(hash_map* map, void* key, void* value) {
 
   if (map->buckets[index] == NULL) {
     map->buckets[index] = node;
-
+    map->load_factor = (float) (map->size + 1) / map->capacity;
   } else {
     hash_node* cur = map->buckets[index];
     while (cur->next != NULL) {
@@ -61,6 +107,14 @@ hash_node* hash_map_insert(hash_map* map, void* key, void* value) {
     }
     cur->next = node;
   }
+  map->size++;
+
+  if (map->load_factor > map->max_load_factor) {
+    #ifdef DEBUG
+    printf("detected load factor %f\n", map->load_factor);
+    #endif
+    hash_map_resize(map);
+   }
   return node;
 }
 
@@ -82,20 +136,7 @@ hash_node* hash_map_find(const hash_map* map, const void* key) {
   return NULL;
 }
 
-hash_map* hash_map_resize(hash_map* map) {
-  if (map == NULL) {
-    return NULL;
-  }
 
-  hash_node** buckets_n = realloc(map->buckets, map->capacity << 2 * sizeof(hash_node*));
-
-  if (buckets_n == NULL) {
-    fprintf(stderr, "Error while reallocating memory");
-    exit(1);
-  }
-  map->buckets = buckets_n;
-  return map;
-}
 
 void hash_map_clear(hash_map *map) {
   size_t idx = 0;
@@ -110,6 +151,7 @@ void hash_map_clear(hash_map *map) {
     }
     cur_bucket = map->buckets[++idx];
   }
+  map->size = 0;
 }
 
 void hash_map_free(hash_map* map) {
@@ -131,9 +173,11 @@ void hash_map_remove(hash_map *map, void *key) {
         map->buckets[index] = cur->next;
       }
       free(cur);
+      map->size--;
       return;
     }
       prev = cur;
       cur = cur->next;
+      map->size--;
     }
 }
