@@ -2,42 +2,35 @@
 #include <stdlib.h>
 #include "hash_map.h"
 
+struct pair {
+  int key;
+  int value;
+};
+
 // custom hash function
-static unsigned long hash_fn(const void* key) {
-  return ((unsigned long) key) * 100;
+static size_t hash_fn(const void* pair) {
+  return ((struct pair*) pair)->key;
 }
 
 // custom comparator
 int comp(const void* x, const void* y) {
-  return (char*) x == (char*) y ? 1 : 0;
+  struct pair* p1 = (struct pair*) x;
+  struct pair* p2 = (struct pair*) y;
+
+  return p1->key == p2->key;
 }
 
 int main() {
-
   hash_map* map;
-  hash_map_init(&map, &hash_fn, &comp);
-  printf("%li\n", map->capacity);
-  int a = 100;
-  printf("%lul", map->hash_fn((void*) &a));
-  hash_map_insert(map, (void*)"key1", (void*)"hello1");
+  hash_map_init(&map, sizeof(struct pair), hash_fn, comp, 10, 0.75f);
 
-  hash_map_insert(map, "key2", "hello2");
-  hash_map_insert(map, "key3", "hello3");
-  hash_map_insert(map, "key3", "hello4");
+  printf("size: %lu\n", map->size);
 
-   char* arr[] = {"key1", "key2", "key3", "key4"};
+  for (int i = 0; i < 5000000; i++) {
+    hash_map_insert(map, &(struct pair){ .key= rand(), .value=68 });
+  }
 
-   for (size_t i = 0; i < 4; i++) {
-     hash_node* node = hash_map_find(map, arr[i]);
-     if (node == NULL) {
-       printf("key not found\n");
-       } else {
-         printf("Key: %s\n", (char*) node->key);
-         printf("Value: %s\n", (char*) node->value);
-       }
-    }
-    hash_map_remove(map, "key1");
-    hash_node* node = hash_map_find(map, "key1");
-
-     printf("%p\n", node);
+  printf("size: %lu", map->size);
+  hash_map_free(map);
+  return 0;
 }
