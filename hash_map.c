@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 // default hashing function
 size_t default_hash(const void *key) {
@@ -16,10 +17,6 @@ int default_eq(const void *key1, const void *key2) {
 hash_map *hash_map_resize(hash_map *map) {
     // double size
     size_t capacity_n = map->capacity << 1;
-
-#ifdef DEBUG
-  printf("rehashing to capacity: %lu\n", capacity_n);
-#endif
 
     // temporarily increases memory to capacity old + capacity new
     hash_node **buckets_n = calloc(capacity_n, sizeof(hash_node *));
@@ -46,18 +43,7 @@ hash_map *hash_map_resize(hash_map *map) {
         }
     }
     free(bucket_old);
-
-#ifdef DEBUG
-  printf("old load factor: %f\n", map->load_factor);
-  printf("NAX load factor: %f\n", map->max_load_factor);
-#endif
-
-    map->load_factor = (float) map->size / (float) capacity_n;
-
-#ifdef DEBUG
-  printf("new load factor: %f\n", map->load_factor);
-#endif
-
+    map->max_size = floor(map->max_load_factor * (double) capacity_n);
     return map;
 }
 
@@ -79,7 +65,7 @@ void hash_map_init(hash_map **map, const size_t elem_size, unsigned long (*hash_
     (*map)->max_load_factor = max_load_factor;
     (*map)->size = 0;
     (*map)->elem_size = elem_size;
-    (*map)->load_factor = 0;
+    (*map)->max_size = floor((double) capacity * max_load_factor);
     (*map)->capacity = capacity;
     (*map)->hash_fn = hash_fn == NULL ? default_hash : hash_fn;
     (*map)->cmp_fn = cmp_fn == NULL ? default_eq : cmp_fn;
@@ -105,33 +91,39 @@ hash_node *allocate_node(const hash_map *map, const void *pair, const size_t has
     return node;
 }
 
+void *hash_map_find_at(const hash_map *map, const void *pair, const size_t index) {
+    const hash_node *node = map->buckets[index];
+    if (node == NULL) {
+        return NULL;
+    }
+    while (node != NULL) {
+        if (map->cmp_fn(node->pair, pair)) {
+            return node->pair;
+        }
+        node = node->next;
+    }
+    return NULL;
+}
+
 void *hash_map_insert(hash_map *map, const void *pair) {
     const size_t hash = map->hash_fn(pair);
     const size_t index = hash % map->capacity;
-    hash_node *node;
+    hash_node *node = NULL;
 
-    const hash_node *cur = map->buckets[index];
-    if (cur == NULL) {
-        node = allocate_node(map, pair, hash);
-        map->buckets[index] = node;
-    } else {
-        while (cur != NULL) {
-            if (map->cmp_fn(cur->pair, pair)) {
-                return NULL;
-            }
-            cur = cur->next;
-        }
-        node = allocate_node(map, pair, hash);
-        cur = node;
+    if (hash_map_find_at(map, pair, index)) {
+        return NULL;
     }
 
-    map->size++;
-    map->load_factor = (float) (map->size) / (float) map->capacity;
+    node = allocate_node(map, pair, hash);
+    hash_node *head = map->buckets[index];
+    map->buckets[index] = node;
+    node->next = head;
 
+    map->size++;
     // resize of load factor is exceeded
-    if (map->load_factor > map->max_load_factor) {
+    if (map->size > map->max_size) {
 #ifdef DEBUG
-    printf("detected load factor %f\n", map->load_factor);
+    printf("Resizing from Size: %lu, Capacity: %lu\n", map->size, map->capacity);
 #endif
         hash_map_resize(map);
     }
@@ -150,6 +142,7 @@ void hash_map_insert_node(const hash_map *map, hash_node *node) {
         node->next = head;
     }
 }
+
 
 void *hash_map_find(const hash_map *map, const void *pair) {
     const unsigned long hash = map->hash_fn(pair);
@@ -188,6 +181,7 @@ void hash_map_clear(hash_map *map) {
 void hash_map_free(hash_map *map) {
     hash_map_clear(map);
     free(map->buckets);
+    free(map);
 }
 
 void hash_map_remove(hash_map *map, const void *key) {
@@ -205,7 +199,6 @@ void hash_map_remove(hash_map *map, const void *key) {
             }
             free(cur);
             map->size--;
-            map->load_factor = (float) (map->size) / (float) map->capacity;
             return;
         }
         prev = cur;

@@ -15,8 +15,8 @@ typedef struct hash_node {
 
 typedef struct hash_map {
     size_t size;
-    float load_factor;
-    float max_load_factor;
+    size_t max_size;
+    double max_load_factor;
     size_t capacity;
     hash_node **buckets;
     size_t elem_size;

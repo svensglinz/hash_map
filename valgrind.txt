@@ -1,0 +1,136 @@
+==337054== Memcheck, a memory error detector
+==337054== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==337054== Using Valgrind-3.22.0-bd4db67b1d-20231031 and LibVEX; rerun with -h for copyright info
+==337054== Command: ./prog
+==337054== Parent PID: 295010
+==337054== 
+--337054-- 
+--337054-- Valgrind options:
+--337054--    --leak-check=full
+--337054--    --show-leak-kinds=all
+--337054--    --track-origins=yes
+--337054--    --verbose
+--337054--    --log-file=valgrind.txt
+--337054-- Contents of /proc/version:
+--337054--   Linux version 6.8.0-45-generic (buildd@lcy02-amd64-115) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.2.0-23ubuntu4) 13.2.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #45-Ubuntu SMP PREEMPT_DYNAMIC Fri Aug 30 12:02:04 UTC 2024
+--337054-- 
+--337054-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
+--337054-- Page sizes: currently 4096, max supported 4096
+--337054-- Valgrind library directory: /usr/libexec/valgrind
+--337054-- Reading syms from /home/sven/Documents/GitHub Repos/hash_map/prog
+--337054-- Reading syms from /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+--337054--   Considering /usr/lib/debug/.build-id/35/3e1b6cb0eebc08cf3ff812eae8a51b4efd684e.debug ..
+--337054--   .. build-id is valid
+--337054-- Reading syms from /usr/libexec/valgrind/memcheck-amd64-linux
+--337054--    object doesn't have a dynamic symbol table
+--337054-- Scheduler: using generic scheduler lock implementation.
+--337054-- Reading suppressions file: /usr/libexec/valgrind/default.supp
+==337054== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-337054-by-sven-on-???
+==337054== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-337054-by-sven-on-???
+==337054== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-337054-by-sven-on-???
+==337054== 
+==337054== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==337054== don't want to do, unless you know exactly what you're doing,
+==337054== or are doing some strange experiment):
+==337054==   /usr/bin/vgdb --pid=337054 ...command...
+==337054== 
+==337054== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==337054==   /path/to/gdb ./prog
+==337054== and then give GDB the following command
+==337054==   target remote | /usr/bin/vgdb --pid=337054
+==337054== --pid is optional if only one valgrind process is running
+==337054== 
+--337054-- REDIR: 0x4028b00 (ld-linux-x86-64.so.2:strlen) redirected to 0x580c2e1a (???)
+--337054-- REDIR: 0x40272b0 (ld-linux-x86-64.so.2:index) redirected to 0x580c2e34 (???)
+--337054-- Reading syms from /usr/libexec/valgrind/vgpreload_core-amd64-linux.so
+--337054-- Reading syms from /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so
+==337054== WARNING: new redirection conflicts with existing -- ignoring it
+--337054--     old: 0x04028b00 (strlen              ) R-> (0000.0) 0x580c2e1a ???
+--337054--     new: 0x04028b00 (strlen              ) R-> (2007.0) 0x0484f340 strlen
+--337054-- REDIR: 0x40274e0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4850460 (strcmp)
+--337054-- REDIR: 0x4026910 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4853cd0 (mempcpy)
+--337054-- Reading syms from /usr/lib/x86_64-linux-gnu/libc.so.6
+--337054--   Considering /usr/lib/debug/.build-id/6d/64b17fbac799e68da7ebd9985ddf9b5cb375e6.debug ..
+--337054--   .. build-id is valid
+--337054-- REDIR: 0x4028ca0 (ld-linux-x86-64.so.2:strncmp) redirected to 0x484fc90 (strncmp)
+--337054-- REDIR: 0x492a040 (libc.so.6:strnlen) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x492a0d0 (libc.so.6:strpbrk) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4928190 (libc.so.6:strcmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49413b0 (libc.so.6:wcsnlen) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4927280 (libc.so.6:memset) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4940b20 (libc.so.6:wcslen) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49ac3c0 (libc.so.6:__memcpy_chk) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49271f0 (libc.so.6:memrchr) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4941350 (libc.so.6:wcsncpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4926710 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x493f8e0 (libc.so.6:wcschr) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4928080 (libc.so.6:index) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x492a100 (libc.so.6:rindex) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x493f990 (libc.so.6:wcscmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49274a0 (libc.so.6:stpncpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x494deb0 (libc.so.6:wmemchr) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929ee0 (libc.so.6:strncmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4927500 (libc.so.6:strcasecmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929300 (libc.so.6:strcspn) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49408f0 (libc.so.6:wcscpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4928010 (libc.so.6:strcat) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929de0 (libc.so.6:strncasecmp_l) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4928100 (libc.so.6:strchrnul) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4926620 (libc.so.6:bcmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929290 (libc.so.6:strcpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49275a0 (libc.so.6:strcasecmp_l) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929cb0 (libc.so.6:strlen) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929f80 (libc.so.6:strncpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x494df30 (libc.so.6:wmemcmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49ac4e0 (libc.so.6:__memmove_chk) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+==337054== WARNING: new redirection conflicts with existing -- ignoring it
+--337054--     old: 0x049fd9d0 (__memcpy_chk_avx_una) R-> (2030.0) 0x04853dd0 __memcpy_chk
+--337054--     new: 0x049fd9d0 (__memcpy_chk_avx_una) R-> (2024.0) 0x04853740 __memmove_chk
+--337054-- REDIR: 0x4927430 (libc.so.6:stpcpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4926fb0 (libc.so.6:memmove) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+==337054== Preferring higher priority redirection:
+--337054--     old: 0x049fda00 (__memcpy_avx_unalign) R-> (2018.0) 0x04851580 __memcpy_avx_unaligned_erms
+--337054--     new: 0x049fda00 (__memcpy_avx_unalign) R-> (2018.1) 0x04852d60 memmove
+--337054-- REDIR: 0x49265a0 (libc.so.6:memchr) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x492a2d0 (libc.so.6:strspn) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x49270d0 (libc.so.6:mempcpy) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4929d40 (libc.so.6:strncasecmp) redirected to 0x483d1c0 (_vgnU_ifunc_wrapper)
+--337054-- REDIR: 0x4a025f0 (libc.so.6:__strrchr_avx2) redirected to 0x484ed20 (rindex)
+--337054-- REDIR: 0x4922640 (libc.so.6:malloc) redirected to 0x48467b0 (malloc)
+--337054-- REDIR: 0x4923790 (libc.so.6:calloc) redirected to 0x484d8a0 (calloc)
+--337054-- REDIR: 0x49ffda0 (libc.so.6:__strchrnul_avx2) redirected to 0x48537b0 (strchrnul)
+--337054-- REDIR: 0x49fda00 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4852d60 (memmove)
+--337054-- REDIR: 0x49fd9d0 (libc.so.6:__memcpy_chk_avx_unaligned_erms) redirected to 0x4853dd0 (__memcpy_chk)
+--337054-- REDIR: 0x4922d20 (libc.so.6:free) redirected to 0x4849820 (free)
+==337054== Invalid read of size 8
+==337054==    at 0x10920E: main (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054==  Address 0x4a8a040 is 0 bytes inside a block of size 64 free'd
+==337054==    at 0x484988F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==337054==    by 0x1091FC: main (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054==  Block was alloc'd at
+==337054==    at 0x4846828: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==337054==    by 0x1094E0: hash_map_init (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054==    by 0x1091AE: main (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054== 
+--337054-- REDIR: 0x49fd9c0 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x48538d0 (mempcpy)
+==337054== 
+==337054== HEAP SUMMARY:
+==337054==     in use at exit: 0 bytes in 0 blocks
+==337054==   total heap usage: 4,994,278 allocs, 4,994,278 frees, 327,589,328 bytes allocated
+==337054== 
+==337054== All heap blocks were freed -- no leaks are possible
+==337054== 
+==337054== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+==337054== 
+==337054== 1 errors in context 1 of 1:
+==337054== Invalid read of size 8
+==337054==    at 0x10920E: main (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054==  Address 0x4a8a040 is 0 bytes inside a block of size 64 free'd
+==337054==    at 0x484988F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==337054==    by 0x1091FC: main (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054==  Block was alloc'd at
+==337054==    at 0x4846828: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==337054==    by 0x1094E0: hash_map_init (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054==    by 0x1091AE: main (in /home/sven/Documents/GitHub Repos/hash_map/prog)
+==337054== 
+==337054== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

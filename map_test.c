@@ -30,7 +30,6 @@ int main() {
     hash_map_insert(map, &(struct pair){ .key= rand(), .value=68 });
   }
 
-  printf("size: %lu", map->size);
   hash_map_free(map);
   return 0;
 }
