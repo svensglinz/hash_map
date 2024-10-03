@@ -42,14 +42,15 @@ hash_map *hash_map_resize(hash_map *map) {
             node = tmp;
         }
     }
-    free(bucket_old);
+    map->free(bucket_old);
     map->max_size = floor(map->max_load_factor * (double) capacity_n);
     return map;
 }
 
 void hash_map_init(hash_map **map, const size_t elem_size, unsigned long (*hash_fn)(const void *),
                    int (*cmp_fn)(const void *, const void *),
-                   const size_t capacity, const float max_load_factor) {
+                   const size_t capacity, const float max_load_factor, void* (*_malloc)(size_t size), void (*_free)(void* ptr)) {
+
     *map = malloc(sizeof(hash_map));
 
     // initialize all values to 0
@@ -69,10 +70,14 @@ void hash_map_init(hash_map **map, const size_t elem_size, unsigned long (*hash_
     (*map)->capacity = capacity;
     (*map)->hash_fn = hash_fn == NULL ? default_hash : hash_fn;
     (*map)->cmp_fn = cmp_fn == NULL ? default_eq : cmp_fn;
+
+    // set allocators
+    _malloc == NULL? (*map)->malloc = malloc : _malloc;
+    _free == NULL? (*map)->free = free : _free;
 }
 
 hash_node *allocate_node(const hash_map *map, const void *pair, const size_t hash) {
-    hash_node *node = malloc(sizeof(hash_node) + map->elem_size);
+    hash_node *node = map->malloc(sizeof(hash_node) + map->elem_size);
 
     if (node == NULL) {
         fprintf(stderr, "Error while allocating memory");
@@ -171,7 +176,7 @@ void hash_map_clear(hash_map *map) {
 
         while (cur != NULL) {
             hash_node *next = cur->next;
-            free(cur);
+            map->free(cur);
             cur = next;
         }
     }
@@ -180,8 +185,8 @@ void hash_map_clear(hash_map *map) {
 
 void hash_map_free(hash_map *map) {
     hash_map_clear(map);
-    free(map->buckets);
-    free(map);
+    map->free(map->buckets);
+    map->free(map);
 }
 
 void hash_map_remove(hash_map *map, const void *key) {
@@ -197,7 +202,7 @@ void hash_map_remove(hash_map *map, const void *key) {
             } else {
                 map->buckets[index] = cur->next;
             }
-            free(cur);
+            map->free(cur);
             map->size--;
             return;
         }

@@ -20,15 +20,29 @@ int comp(const void* x, const void* y) {
   return p1->key == p2->key;
 }
 
+
+/* custom stack based allocator
+ * -----------------------------------------------------------
+ */
+
 int main() {
+  // update to take custom node allocator
   hash_map* map;
-  hash_map_init(&map, sizeof(struct pair), hash_fn, comp, 10, 0.75f);
+  hash_map_init(&map, sizeof(struct pair), hash_fn, comp, 10, 0.75f, NULL, NULL);
 
   printf("size: %lu\n", map->size);
 
-  for (int i = 0; i < 5000000; i++) {
-    hash_map_insert(map, &(struct pair){ .key= rand(), .value=68 });
+  for (int i = 0; i < 100000; i++) {
+    hash_map_insert(map, &(struct pair){ .key= rand() % 10000000, .value=68 });
   }
+
+  printf("size: %lu\n", map->size);
+
+  for (int i = 0; i < 100000; i++) {
+    hash_map_remove(map, &(struct pair){ .key= rand() % 10000000, .value=68 });
+  }
+
+  printf("size: %lu\n", map->size);
 
   hash_map_free(map);
   return 0;

@@ -22,10 +22,12 @@ typedef struct hash_map {
     size_t elem_size;
     size_t (*hash_fn)(const void *); // optional custom hash function
     int (*cmp_fn)(const void *, const void *); // optional custom comparator
+    void* (*malloc)(size_t);
+    void (*free)(void *);
 } hash_map;
 
 void hash_map_init(hash_map **map, size_t elem_size, const unsigned long (*hash_fn)(const void *),
-                   const int (*cmp_fn)(const void *, const void *), size_t capacity, float max_load_factor);
+                   const int (*cmp_fn)(const void *, const void *), size_t capacity, float max_load_factor, void* (*)(size_t), void (*)(void*));
 
 void hash_map_free(hash_map *map);
 
